@@ -1,6 +1,6 @@
-
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_mobile_vision_2/flutter_mobile_vision_2.dart';
 
 class TakePictureScreen extends StatefulWidget {
@@ -18,28 +18,83 @@ class _TakePictureScreen extends State<TakePictureScreen> {
   String imagePath = '';
   CustomPaint? _customPaint;
   String? _text;
+  late String _platformVersion = 'Unknown ';
 
+  Future<void> initPlatformState() async {
+    String platformVersion;
+
+    try {
+      platformVersion = await FlutterMobileVision.platformVersion ?? 'Unknown platform version';
+    } on PlatformException {
+      platformVersion = 'Failed to get platform version.';
+    }
+
+    if (!mounted) return;
+
+    setState(() {
+      _platformVersion = platformVersion;
+    });
+  }
+
+  int? _cameraOcr = FlutterMobileVision.CAMERA_BACK;
+  bool _autoFocusOcr = true;
+  bool _torchOcr = false;
+  bool _multipleOcr = false;
+  bool _waitTapOcr = false;
+  bool _showTextOcr = true;
+  Size? _previewOcr;
+  List<OcrText> _textsOcr = [];
+
+  @override
+  void initState() {
+    super.initState();
+    controller = CameraController(widget.camera, ResolutionPreset.max);
+    controller?.initialize().then((value) {
+      if (!mounted) {
+        return;
+      }
+      setState(() {});
+    });
+
+    FlutterMobileVision.start().then((previewSizes) => setState(() {
+      _previewOcr = previewSizes[_cameraOcr]!.first;
+    }));
+  }
+  
   void _processImage(XFile image) async {
     setState(() {
-      imagePath = image.path;
+      imagePath = imagePath;
     });
 
     List<OcrText> texts = [];
+    Size _scanPreviewOcr = _previewOcr ?? FlutterMobileVision.PREVIEW;
 
     try {
       texts = await FlutterMobileVision.read(
-        flash: false,
-        autoFocus: true,
-        multiple: true,
-        showText: true,
-        preview: const Size(200, 200),
-        camera: FlutterMobileVision.CAMERA_BACK
+          flash: _torchOcr,
+          autoFocus: _autoFocusOcr,
+          multiple: _multipleOcr,
+          waitTap: _waitTapOcr,
+          forceCloseCameraOnTap: false,
+          imagePath: imagePath,
+          showText: _showTextOcr,
+          preview: _previewOcr ?? FlutterMobileVision.PREVIEW,
+          scanArea: Size(_scanPreviewOcr.width - 20, _scanPreviewOcr.height - 20),
+          camera: _cameraOcr ?? FlutterMobileVision.CAMERA_BACK,
+          fps: 2.0
       );
     } on Exception {
       texts.add(OcrText('Failed to recognize text.'));
     }
 
-    print('Text $texts');
+    if (!mounted) return;
+    setState(() {
+      _textsOcr = texts;
+
+      for (var textOcr in texts) {
+        print(textOcr);
+      }
+    });
 
     // final inputImage = InputImage.fromFilePath(image.path);
     // final textRecognizer = TextRecognizer(script: TextRecognitionScript.latin);
@@ -83,18 +138,6 @@ class _TakePictureScreen extends State<TakePictureScreen> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    controller = CameraController(widget.camera, ResolutionPreset.max);
-    controller?.initialize().then((value) {
-      if (!mounted) {
-        return;
-      }
-      setState(() {});
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
@@ -110,9 +153,7 @@ class _TakePictureScreen extends State<TakePictureScreen> {
             child: ElevatedButton(onPressed: () async {
               try {
                 final image = await controller!.takePicture();
-                setState(() {
-                  imagePath = image.path;
-                });
+                _processImage(image.path);
               } catch(e) {
                 print(e);
               }
