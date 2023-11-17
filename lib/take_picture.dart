@@ -61,7 +61,7 @@ class _TakePictureScreen extends State<TakePictureScreen> {
     }));
   }
   
-  void _processImage(XFile image) async {
+  void _processImage(String imagePath) async {
     setState(() {
       imagePath = imagePath;
     });
