@@ -2,6 +2,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_mobile_vision_2/flutter_mobile_vision_2.dart';
+import 'package:learning_digital_ink_recognition/learning_digital_ink_recognition.dart';
 
 class TakePictureScreen extends StatefulWidget {
   const TakePictureScreen({super.key, required this.camera});
@@ -24,7 +25,8 @@ class _TakePictureScreen extends State<TakePictureScreen> {
     String platformVersion;
 
     try {
-      platformVersion = await FlutterMobileVision.platformVersion ?? 'Unknown platform version';
+      platformVersion = await FlutterMobileVision.platformVersion ??
+          'Unknown platform version';
     } on PlatformException {
       platformVersion = 'Failed to get platform version.';
     }
@@ -36,12 +38,12 @@ class _TakePictureScreen extends State<TakePictureScreen> {
     });
   }
 
-  int? _cameraOcr = FlutterMobileVision.CAMERA_BACK;
-  bool _autoFocusOcr = true;
-  bool _torchOcr = false;
-  bool _multipleOcr = false;
-  bool _waitTapOcr = false;
-  bool _showTextOcr = true;
+  final int _cameraOcr = FlutterMobileVision.CAMERA_BACK;
+  final bool _autoFocusOcr = true;
+  final bool _torchOcr = false;
+  final bool _multipleOcr = false;
+  final bool _waitTapOcr = false;
+  final bool _showTextOcr = true;
   Size? _previewOcr;
   List<OcrText> _textsOcr = [];
 
@@ -57,44 +59,43 @@ class _TakePictureScreen extends State<TakePictureScreen> {
     });
 
     FlutterMobileVision.start().then((previewSizes) => setState(() {
-      _previewOcr = previewSizes[_cameraOcr]!.first;
-    }));
+          _previewOcr = previewSizes[_cameraOcr]!.first;
+        }));
   }
-  
-  void _processImage(String imagePath) async {
-    setState(() {
-      imagePath = imagePath;
-    });
 
-    List<OcrText> texts = [];
-    Size _scanPreviewOcr = _previewOcr ?? FlutterMobileVision.PREVIEW;
+  Future<void> _processImage(String imagePath) async {
+    // setState(() {
+    //   imagePath = imagePath;
+    // });
 
-    try {
-      texts = await FlutterMobileVision.read(
-          flash: _torchOcr,
-          autoFocus: _autoFocusOcr,
-          multiple: _multipleOcr,
-          waitTap: _waitTapOcr,
-          forceCloseCameraOnTap: false,
-          imagePath: imagePath,
-          showText: _showTextOcr,
-          preview: _previewOcr ?? FlutterMobileVision.PREVIEW,
-          scanArea: Size(_scanPreviewOcr.width - 20, _scanPreviewOcr.height - 20),
-          camera: _cameraOcr ?? FlutterMobileVision.CAMERA_BACK,
-          fps: 2.0
-      );
-    } on Exception {
-      texts.add(OcrText('Failed to recognize text.'));
-    }
+    // List<OcrText> texts = [];
+    // Size scanPreviewOcr = _previewOcr ?? FlutterMobileVision.PREVIEW;
 
-    if (!mounted) return;
-    setState(() {
-      _textsOcr = texts;
+    // try {
+    //   texts = await FlutterMobileVision.read(
+    //       flash: _torchOcr,
+    //       autoFocus: _autoFocusOcr,
+    //       multiple: _multipleOcr,
+    //       waitTap: _waitTapOcr,
+    //       forceCloseCameraOnTap: false,
+    //       imagePath: imagePath,
+    //       showText: _showTextOcr,
+    //       preview: _previewOcr ?? FlutterMobileVision.PREVIEW,
+    //       scanArea: Size(scanPreviewOcr.width - 20, scanPreviewOcr.height - 20),
+    //       camera: _cameraOcr,
+    //       fps: 2.0);
+    // } on Exception {
+    //   texts.add(OcrText('Failed to recognize text.'));
+    // }
 
-      for (var textOcr in texts) {
-        print(textOcr);
-      }
-    });
+    // if (!mounted) return;
+    // setState(() {
+    //   _textsOcr = texts;
+
+    //   for (var textOcr in texts) {
+    //     print(textOcr);
+    //   }
+    // });
 
     // final inputImage = InputImage.fromFilePath(image.path);
     // final textRecognizer = TextRecognizer(script: TextRecognitionScript.latin);
@@ -140,27 +141,39 @@ class _TakePictureScreen extends State<TakePictureScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          Container(
-            constraints: const BoxConstraints.expand(),
-            child: AspectRatio(
-              aspectRatio: controller!.value.aspectRatio,
-              child: CameraPreview(controller!),
-            ),
-          ),
-          Center(
-            child: ElevatedButton(onPressed: () async {
-              try {
-                final image = await controller!.takePicture();
-                _processImage(image.path);
-              } catch(e) {
-                print(e);
-              }
-            }, child: const Text("Scan document")),
-          )
-        ],
-      )
-    );
+        body: Center(
+      child: ElevatedButton(
+          onPressed: () async {
+            try {
+              final image = await controller!.takePicture();
+              _processImage(image.path);
+            } catch (e) {
+              print(e);
+            }
+          },
+          child: const Text("Scan document")),
+    )
+        // body: Stack(
+        //   children: [
+        //     Container(
+        //       constraints: const BoxConstraints.expand(),
+        //       child: AspectRatio(
+        //         aspectRatio: controller!.value.aspectRatio,
+        //         child: CameraPreview(controller!),
+        //       ),
+        //     ),
+        //     Center(
+        //       child: ElevatedButton(onPressed: () async {
+        //         try {
+        //           final image = await controller!.takePicture();
+        //           _processImage(image.path);
+        //         } catch(e) {
+        //           print(e);
+        //         }
+        //       }, child: const Text("Scan document")),
+        //     )
+        //   ],
+        // )
+        );
   }
 }

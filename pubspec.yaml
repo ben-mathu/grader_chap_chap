@@ -39,6 +39,8 @@ dependencies:
   path_provider: ^2.1.1
   path: ^1.8.3
   flutter_mobile_vision_2: ^0.1.15
+  learning_digital_ink_recognition: ^0.0.2
+  provider: ^5.0.0
 
 dev_dependencies:
   flutter_test:
