@@ -39,8 +39,8 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   void _scanPapers() {
     Navigator.of(context).push(MaterialPageRoute(
-        // builder: (context) => TakePictureScreen(camera: widget.camera)));
-        builder: (context) => DigitalInkRecognitionPage()));
+        builder: (context) =>
+            TakePictureScreen(title: "", camera: widget.camera)));
   }
 
   @override
