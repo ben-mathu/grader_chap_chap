@@ -43,18 +43,6 @@ class _TakePictureScreen extends State<TakePictureScreen> {
             child: CameraPreview(controller!),
           ),
         ),
-        Center(
-          child: ElevatedButton(
-              onPressed: () async {
-                try {
-                  final image = await controller!.takePicture();
-                  _processImage(image.path);
-                } catch (e) {
-                  print(e);
-                }
-              },
-              child: const Text("Scan document")),
-        )
       ],
     ));
   }

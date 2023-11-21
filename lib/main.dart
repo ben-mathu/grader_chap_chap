@@ -15,12 +15,78 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: 'Flutter Demo',
+        title: 'Grader Chap Chap',
         theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.cyan),
           useMaterial3: true,
         ),
-        home: TakePictureScreen(
-            title: 'Grader Chap Chap', camera: cameras!.first));
+        home: const HomePage(title: 'Grader Chap Chap'));
+  }
+}
+
+class HomePage extends StatefulWidget {
+  const HomePage({super.key, required this.title});
+
+  final String title;
+  @override
+  State<StatefulWidget> createState() => _HomePage();
+}
+
+class _HomePage extends State<HomePage> {
+  void _openCamera() {
+    Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) =>
+            TakePictureScreen(title: "", camera: cameras!.first)));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(
+          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+          title: Text(widget.title),
+        ),
+        body: Center(
+          child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+            const Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Expanded(
+                    child: Padding(
+                  padding: EdgeInsets.all(10),
+                  child: TextField(
+                    obscureText: true,
+                    style: TextStyle(color: Colors.white),
+                    keyboardType: TextInputType.text,
+                    decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'Student ID',
+                        hintText: '001/90298493',
+                        suffixIcon: Icon(Icons.arrow_drop_down)),
+                  ),
+                )),
+                Expanded(
+                    child: Padding(
+                  padding: EdgeInsets.all(10),
+                  child: TextField(
+                    obscureText: true,
+                    style: TextStyle(color: Colors.white),
+                    keyboardType: TextInputType.text,
+                    decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'Subject',
+                        hintText: 'Chemistry',
+                        suffixIcon: Icon(Icons.arrow_drop_down)),
+                  ),
+                )),
+              ],
+            ),
+            ElevatedButton.icon(
+              onPressed: _openCamera,
+              label: const Text('Take Picture'),
+              icon: const Icon(Icons.camera),
+            ),
+          ]),
+        ));
   }
 }
