@@ -44,9 +44,11 @@ class _HomePage extends State<HomePage> {
 
   void _fetchData() async {
     List<dynamic> students = await widget.service.fetchStudents();
+    print(students);
     students.forEach((student) {
       widget.studentIdList.add(student['index_no']);
     });
+    print('Student ID List: ${widget.studentIdList.length}');
   }
 
   @override
@@ -66,8 +68,6 @@ class _HomePage extends State<HomePage> {
                     child: Padding(
                   padding: const EdgeInsets.all(10),
                   child: TextField(
-                    obscureText: true,
-                    style: const TextStyle(color: Colors.white),
                     keyboardType: TextInputType.text,
                     autofillHints: widget.studentIdList,
                     decoration: const InputDecoration(

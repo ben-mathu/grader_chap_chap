@@ -5,7 +5,7 @@ import 'dart:convert';
 class ApiService {
   Future<List<dynamic>> fetchStudents() async {
     final url = Uri.parse(Constants.baseUrl + Constants.studentEndpoint);
-    final response = await http.get(url);
+    final response = await http.get(url, headers: {"HttpHeaders.contentTypeHeader": "application/json"});
 
     print(response.body);
 
