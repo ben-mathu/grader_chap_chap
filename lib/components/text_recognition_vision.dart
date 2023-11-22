@@ -1,7 +1,6 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:grader_chap_chap/scan_written_text.dart';
-import 'package:grader_chap_chap/take_picture.dart';
+import 'package:grader_chap_chap/components/take_picture.dart';
 
 List<CameraDescription>? cameras;
 void main() async {

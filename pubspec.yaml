@@ -41,6 +41,7 @@ dependencies:
   flutter_mobile_vision_2: ^0.1.15
   learning_digital_ink_recognition: ^0.0.2
   provider: ^5.0.0
+  http: ^1.1.0
 
 dev_dependencies:
   flutter_test:

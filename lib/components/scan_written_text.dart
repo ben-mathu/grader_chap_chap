@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:grader_chap_chap/button.dart';
+import 'package:grader_chap_chap/components/button.dart';
 import 'package:learning_digital_ink_recognition/learning_digital_ink_recognition.dart';
 import 'package:provider/provider.dart';
 
