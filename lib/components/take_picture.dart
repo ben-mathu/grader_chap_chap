@@ -121,7 +121,22 @@ class _TakePictureScreen extends State<TakePictureScreen> {
                             Text('Index Number: ${widget.indexNumber}'),
                             Text("Total: ${grade['total_marks']}"),
                             Column(
-                              children: [grade['']],
+                              children: [
+                                grade['questions'].map((question) {
+                                  return Column(
+                                    children: [
+                                      Text(
+                                        'Question: ${question['label']}',
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      const Divider(height: 1),
+                                      Text('Marks: ${question['marks']}'),
+                                      Text('Reason: ${question['reason']}')
+                                    ],
+                                  );
+                                })
+                              ],
                             )
                           ],
                         ),
