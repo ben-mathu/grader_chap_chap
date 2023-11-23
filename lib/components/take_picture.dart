@@ -32,7 +32,9 @@ class _TakePictureScreen extends State<TakePictureScreen> {
   CameraController? controller;
   String? imagePath;
   dynamic grade;
+  List<dynamic> questions = [];
   Widget? cameraContainer;
+  bool showIndicator = false;
 
   @override
   void initState() {
@@ -74,6 +76,8 @@ class _TakePictureScreen extends State<TakePictureScreen> {
     // debugPrint('_processImage: $grade');
     setState(() {
       grade = results['grade'];
+      questions = grade['questions'];
+      showIndicator = false;
     });
     print('Grade: $grade');
   }
@@ -121,22 +125,21 @@ class _TakePictureScreen extends State<TakePictureScreen> {
                             Text('Index Number: ${widget.indexNumber}'),
                             Text("Total: ${grade['total_marks']}"),
                             Column(
-                              children: [
-                                grade['questions'].map((question) {
-                                  return Column(
-                                    children: [
-                                      Text(
-                                        'Question: ${question['label']}',
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      const Divider(height: 1),
-                                      Text('Marks: ${question['marks']}'),
-                                      Text('Reason: ${question['reason']}')
-                                    ],
-                                  );
-                                })
-                              ],
+                              children: questions.map((question) {
+                                dynamic questionObj = question['question'];
+                                return Column(
+                                  children: [
+                                    Text(
+                                      'Question: ${questionObj['label']}',
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    const Divider(height: 1),
+                                    Text('Marks: ${questionObj['marks']}'),
+                                    Text('Reason: ${questionObj['reason']}')
+                                  ],
+                                );
+                              }).toList(),
                             )
                           ],
                         ),
@@ -175,6 +178,9 @@ class _TakePictureScreen extends State<TakePictureScreen> {
                             onPressed: () async {
                               try {
                                 _processImage();
+                                setState(() {
+                                  showIndicator = true;
+                                });
                                 // debugPrint('Tapping Submit');
                               } catch (e) {
                                 print(e);
@@ -204,7 +210,11 @@ class _TakePictureScreen extends State<TakePictureScreen> {
                   ),
                 ))
           ],
-        )
+        ),
+        if (showIndicator)
+          const Center(
+            child: CircularProgressIndicator(),
+          ),
       ],
     ));
   }
