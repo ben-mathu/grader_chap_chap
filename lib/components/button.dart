@@ -102,7 +102,7 @@ class NormalButton extends StatelessWidget {
     this.fontWeight = FontWeight.normal,
   }) : super(key: key);
 
-  bool get existGradientColors => gradientColors.length > 0;
+  bool get existGradientColors => gradientColors.isNotEmpty;
 
   LinearGradient get linearGradient => existGradientColors
       ? LinearGradient(

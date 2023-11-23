@@ -65,6 +65,7 @@ class _HomePage extends State<HomePage> {
   void _fetchData() async {
     List<dynamic> students = await widget.service.fetchStudents(url);
     debugPrint('Students: $students');
+    widget.studentIdList.clear();
     for (var student in students) {
       widget.studentIdList.add(student['index_no']);
     }
@@ -82,9 +83,7 @@ class _HomePage extends State<HomePage> {
     });
   }
 
-  void _useImage() {
-
-  }
+  void _useImage() {}
 
   static String _displayIndexNumbersForOptions(String indexNumber) =>
       indexNumber;
@@ -102,14 +101,14 @@ class _HomePage extends State<HomePage> {
             padding: const EdgeInsets.all(10),
             child: Card(
               child: Column(mainAxisSize: MainAxisSize.min, children: [
-                // TextField(
-                //   onChanged: (String value) => {url = value},
-                //   keyboardType: TextInputType.text,
-                //   decoration: const InputDecoration(
-                //       border: OutlineInputBorder(),
-                //       labelText: 'Configure URL (temporary)',
-                //       hintText: 'localhost:8000'),
-                // ),
+                TextField(
+                  onChanged: (String value) => {url = value},
+                  keyboardType: TextInputType.text,
+                  decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'Configure URL (temporary)',
+                      hintText: 'localhost:8000'),
+                ),
                 Padding(
                   padding: const EdgeInsets.all(10),
                   child: Autocomplete<String>(
@@ -128,6 +127,9 @@ class _HomePage extends State<HomePage> {
                       );
                     },
                     optionsBuilder: (TextEditingValue textEditingValue) {
+                      if (widget.studentIdList.isEmpty) {
+                        _fetchData();
+                      }
                       if (textEditingValue.text == '') {
                         return const Iterable<String>.empty();
                       }
@@ -161,6 +163,9 @@ class _HomePage extends State<HomePage> {
                       );
                     },
                     optionsBuilder: (TextEditingValue textEditingValue) {
+                      if (subjects.isEmpty) {
+                        _fetchData();
+                      }
                       if (textEditingValue.text == '') {
                         return const Iterable<String>.empty();
                       }
@@ -178,24 +183,27 @@ class _HomePage extends State<HomePage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                  ElevatedButton.icon(
-                    onPressed: _openCamera,
-                    label: const Text('Take Picture'),
-                    icon: const Icon(Icons.camera),
-                    style: ButtonStyle(
-                        shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5)))),
-                  ),
-                const SizedBox(width: 5),
-                ElevatedButton.icon(
-                    onPressed: _useImage,
-                    label: const Text('Upload Photo'),
-                    icon: const Icon(Icons.file_copy),
-                    style: ButtonStyle(
-                        shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5)))),
-                  ),
-                ],)
+                    ElevatedButton.icon(
+                      onPressed: _openCamera,
+                      label: const Text('Take Picture'),
+                      icon: const Icon(Icons.camera),
+                      style: ButtonStyle(
+                          shape: MaterialStateProperty.all(
+                              RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(5)))),
+                    ),
+                    const SizedBox(width: 5),
+                    ElevatedButton.icon(
+                      onPressed: _useImage,
+                      label: const Text('Upload Photo'),
+                      icon: const Icon(Icons.file_copy),
+                      style: ButtonStyle(
+                          shape: MaterialStateProperty.all(
+                              RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(5)))),
+                    ),
+                  ],
+                )
               ]),
             )));
   }

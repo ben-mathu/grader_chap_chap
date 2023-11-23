@@ -6,10 +6,12 @@ import 'package:provider/provider.dart';
 import 'painter.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -17,19 +19,21 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.lightBlue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
-        primaryTextTheme: TextTheme(
-          headline6: TextStyle(color: Colors.white),
+        primaryTextTheme: const TextTheme(
+          titleLarge: TextStyle(color: Colors.white),
         ),
       ),
       home: ChangeNotifierProvider(
         create: (_) => DigitalInkRecognitionState(),
-        child: DigitalInkRecognitionPage(),
+        child: const DigitalInkRecognitionPage(),
       ),
     );
   }
 }
 
 class DigitalInkRecognitionPage extends StatefulWidget {
+  const DigitalInkRecognitionPage({super.key});
+
   @override
   _DigitalInkRecognitionPageState createState() =>
       _DigitalInkRecognitionPageState();
@@ -42,7 +46,7 @@ class _DigitalInkRecognitionPageState extends State<DigitalInkRecognitionPage> {
   late DigitalInkRecognition _recognition;
 
   double get _width => MediaQuery.of(context).size.width;
-  double _height = 360;
+  final double _height = 360;
 
   @override
   void initState() {
@@ -125,7 +129,7 @@ class _DigitalInkRecognitionPageState extends State<DigitalInkRecognitionPage> {
                 child: Consumer<DigitalInkRecognitionState>(
                   builder: (_, state, __) => CustomPaint(
                     painter: DigitalInkPainter(writings: state.writings),
-                    child: Container(
+                    child: SizedBox(
                       width: _width,
                       height: _height,
                     ),
@@ -134,28 +138,28 @@ class _DigitalInkRecognitionPageState extends State<DigitalInkRecognitionPage> {
               );
             },
           ),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           NormalPinkButton(
             text: 'Start Recognition',
             onPressed: _startRecognition,
           ),
-          SizedBox(height: 5),
+          const SizedBox(height: 5),
           NormalBlueButton(
             text: 'Reset Canvas',
             onPressed: _reset,
           ),
-          SizedBox(height: 15),
+          const SizedBox(height: 15),
           Center(
             child:
                 Consumer<DigitalInkRecognitionState>(builder: (_, state, __) {
               if (state.isNotProcessing && state.isNotEmpty) {
                 return Center(
                   child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 18),
+                    padding: const EdgeInsets.symmetric(horizontal: 18),
                     child: Text(
                       state.toCompleteString(),
                       textAlign: TextAlign.center,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 18,
                       ),
                     ),
@@ -169,7 +173,7 @@ class _DigitalInkRecognitionPageState extends State<DigitalInkRecognitionPage> {
                     width: 36,
                     height: 36,
                     color: Colors.transparent,
-                    child: CircularProgressIndicator(strokeWidth: 2),
+                    child: const CircularProgressIndicator(strokeWidth: 2),
                   ),
                 );
               }

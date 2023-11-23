@@ -32,22 +32,45 @@ class _TakePictureScreen extends State<TakePictureScreen> {
   CameraController? controller;
   String? imagePath;
   dynamic grade;
+  Widget? cameraContainer;
 
   @override
   void initState() {
     super.initState();
-    controller = CameraController(widget.camera, ResolutionPreset.max);
-    controller?.initialize().then((value) {
-      if (!mounted) {
-        return;
-      }
+    setState(() {
+      controller = CameraController(widget.camera, ResolutionPreset.max);
+      controller?.initialize().then((value) {
+        if (!mounted) {
+          return;
+        }
+
+        setState(() {
+          cameraContainer = _getCameraContainer();
+        });
+      });
     });
+  }
+
+  Widget? _getCameraContainer() {
+    try {
+      print('take_picture: $controller $imagePath $cameraContainer');
+      return Container(
+        constraints: const BoxConstraints.expand(),
+        child: AspectRatio(
+          aspectRatio: 2,
+          child: CameraPreview(controller!),
+        ),
+      );
+    } on Exception catch (e) {
+      print(e);
+    }
+    return null;
   }
 
   void _processImage() async {
     // debugPrint('_processImage: Processing image...');
-    final dynamic results = await widget.service
-        .gradePaper(widget.indexNumber, widget.subject, imagePath??'', widget.url);
+    final dynamic results = await widget.service.gradePaper(
+        widget.indexNumber, widget.subject, imagePath ?? '', widget.url);
     // debugPrint('_processImage: $grade');
     setState(() {
       grade = results['grade'];
@@ -67,14 +90,9 @@ class _TakePictureScreen extends State<TakePictureScreen> {
     return Scaffold(
         body: Stack(
       children: [
-        Container(
-          constraints: const BoxConstraints.expand(),
-          child: AspectRatio(
-            aspectRatio: controller?.value.aspectRatio ?? 1,
-            child: CameraPreview(controller!),
-          ),
-        ),
-        if (imagePath != null) Image.file(File(imagePath??'')),
+        if (controller != null && imagePath == null && cameraContainer != null)
+          cameraContainer!,
+        if (imagePath != null) Image.file(File(imagePath ?? '')),
         Column(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.end,
@@ -101,7 +119,10 @@ class _TakePictureScreen extends State<TakePictureScreen> {
                               color: Colors.black,
                             ),
                             Text('Index Number: ${widget.indexNumber}'),
-                            Text("Results: ${grade['total_marks']}"),
+                            Text("Total: ${grade['total_marks']}"),
+                            Column(
+                              children: [grade['']],
+                            )
                           ],
                         ),
                       ),
