@@ -102,7 +102,11 @@ class _HomePage extends State<HomePage> {
             child: Card(
               child: Column(mainAxisSize: MainAxisSize.min, children: [
                 TextField(
-                  onChanged: (String value) => {url = value},
+                  onChanged: (String value) => {
+                    setState(() {
+                      url = value;
+                    })
+                  },
                   keyboardType: TextInputType.text,
                   decoration: const InputDecoration(
                       border: OutlineInputBorder(),
