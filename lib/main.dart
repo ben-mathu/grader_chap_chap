@@ -17,12 +17,14 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: 'Grader Chap Chap',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.cyan),
-          useMaterial3: true,
-        ),
-        home: HomePage(title: 'Grader Chap Chap'));
+      title: 'Grader Chap Chap',
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFFF78C1B)),
+        useMaterial3: true,
+      ),
+      home: HomePage(title: 'Grader Chap Chap'),
+      debugShowCheckedModeBanner: false,
+    );
   }
 }
 
@@ -44,6 +46,12 @@ class _HomePage extends State<HomePage> {
   String selectedSubject = '';
   String url = Constants.baseUrl;
 
+  @override
+  void initState() {
+    super.initState();
+    _fetchData();
+  }
+
   void _openCamera() {
     Navigator.of(context).push(MaterialPageRoute(
         builder: (context) => TakePictureScreen(
@@ -64,9 +72,18 @@ class _HomePage extends State<HomePage> {
 
     // Fetch subject
     List<dynamic> subjectObjList = await widget.service.fetchSubjects(url);
+    List<String> subjectList = [];
     for (var subject in subjectObjList) {
-      subjects.add(subject['name']);
+      subjectList.add(subject['name']);
     }
+
+    setState(() {
+      subjects = subjectList;
+    });
+  }
+
+  void _useImage() {
+
   }
 
   static String _displayIndexNumbersForOptions(String indexNumber) =>
@@ -76,53 +93,73 @@ class _HomePage extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    _fetchData();
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,
           title: Text(widget.title),
         ),
         body: Padding(
-          padding: const EdgeInsets.all(10),
-          child: Column(children: [
-            TextField(
-              onChanged: (String value) => {url = value},
-              keyboardType: TextInputType.text,
-              decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Configure URL (temporary)',
-                  hintText: 'localhost:8000'),
-            ),
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: Autocomplete<String>(
-                      displayStringForOption: _displayIndexNumbersForOptions,
-                      optionsBuilder: (TextEditingValue textEditingValue) {
-                        if (textEditingValue.text == '') {
-                          return const Iterable<String>.empty();
-                        }
-                        return widget.studentIdList.where(
-                            (String indexNumber) => indexNumber
-                                .toString()
-                                .contains(textEditingValue.text.toLowerCase()));
-                      },
-                      onSelected: (String selection) {
-                        selectedIndexNumber = selection;
-                        debugPrint(
-                            'You just selected ${_displayIndexNumbersForOptions(selection)}');
-                      },
-                    ),
+            padding: const EdgeInsets.all(10),
+            child: Card(
+              child: Column(mainAxisSize: MainAxisSize.min, children: [
+                // TextField(
+                //   onChanged: (String value) => {url = value},
+                //   keyboardType: TextInputType.text,
+                //   decoration: const InputDecoration(
+                //       border: OutlineInputBorder(),
+                //       labelText: 'Configure URL (temporary)',
+                //       hintText: 'localhost:8000'),
+                // ),
+                Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: Autocomplete<String>(
+                    displayStringForOption: _displayIndexNumbersForOptions,
+                    fieldViewBuilder: (BuildContext context,
+                        TextEditingController fieldTextEditingController,
+                        FocusNode fieldFocusNode,
+                        VoidCallback onFieldSubmitted) {
+                      return TextField(
+                        decoration: const InputDecoration(
+                            label: Text('Index Number'),
+                            hintText: '001',
+                            border: OutlineInputBorder()),
+                        controller: fieldTextEditingController,
+                        focusNode: fieldFocusNode,
+                      );
+                    },
+                    optionsBuilder: (TextEditingValue textEditingValue) {
+                      if (textEditingValue.text == '') {
+                        return const Iterable<String>.empty();
+                      }
+                      return widget.studentIdList.where((String indexNumber) =>
+                          indexNumber
+                              .toString()
+                              .contains(textEditingValue.text.toLowerCase()));
+                    },
+                    onSelected: (String selection) {
+                      selectedIndexNumber = selection;
+                      debugPrint(
+                          'You just selected ${_displayIndexNumbersForOptions(selection)}');
+                    },
                   ),
                 ),
-                Expanded(
-                    child: Padding(
+                Padding(
                   padding: const EdgeInsets.all(10),
                   child: Autocomplete<String>(
                     displayStringForOption: _displaySubjectNameForOptions,
+                    fieldViewBuilder: (BuildContext context,
+                        TextEditingController fieldTextEditingController,
+                        FocusNode fieldFocusNode,
+                        VoidCallback onFieldSubmitted) {
+                      return TextField(
+                        decoration: const InputDecoration(
+                            label: Text('Subject'),
+                            hintText: 'Chemistry',
+                            border: OutlineInputBorder()),
+                        controller: fieldTextEditingController,
+                        focusNode: fieldFocusNode,
+                      );
+                    },
                     optionsBuilder: (TextEditingValue textEditingValue) {
                       if (textEditingValue.text == '') {
                         return const Iterable<String>.empty();
@@ -137,15 +174,29 @@ class _HomePage extends State<HomePage> {
                           'You just selected ${_displaySubjectNameForOptions(subjectSelection)}');
                     },
                   ),
-                )),
-              ],
-            ),
-            ElevatedButton.icon(
-              onPressed: _openCamera,
-              label: const Text('Take Picture'),
-              icon: const Icon(Icons.camera),
-            ),
-          ]),
-        ));
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                  ElevatedButton.icon(
+                    onPressed: _openCamera,
+                    label: const Text('Take Picture'),
+                    icon: const Icon(Icons.camera),
+                    style: ButtonStyle(
+                        shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5)))),
+                  ),
+                const SizedBox(width: 5),
+                ElevatedButton.icon(
+                    onPressed: _useImage,
+                    label: const Text('Upload Photo'),
+                    icon: const Icon(Icons.file_copy),
+                    style: ButtonStyle(
+                        shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5)))),
+                  ),
+                ],)
+              ]),
+            )));
   }
 }

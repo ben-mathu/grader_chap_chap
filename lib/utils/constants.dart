@@ -1,5 +1,5 @@
 class Constants {
-  static String baseUrl = 'https://bab5-197-177-30-3.ngrok-free.app/api/v1/';
+  static String baseUrl = 'https://91eb-102-0-1-234.ngrok-free.app/api/v1/';
   static String studentsEndpoint = 'students';
   static String subjectsEndpoint = 'subjects';
 
