@@ -77,4 +77,25 @@ class ApiService {
     }
     return request;
   }
+
+  Future<dynamic> saveGrades(
+      int totalMarks, int subject, String baseUrl) async {
+    final Uri uri = Uri.parse('$baseUrl${Constants.gradesEndpoint}');
+
+    final data = {"grade": totalMarks, "subject": subject};
+
+    final response = await http.post(uri,
+        headers: {"Content-Type": "application/json"}, body: json.encode(data));
+
+    try {
+      if (response.statusCode == 201) {
+        return json.decode(response.body);
+      } else {
+        throw Exception('Could not retrieve subjects');
+      }
+    } on Exception catch (e) {
+      print(e.toString());
+      throw Exception('Could not grade');
+    }
+  }
 }

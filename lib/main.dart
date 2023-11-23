@@ -41,6 +41,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePage extends State<HomePage> {
   List<String> subjects = [];
+  List<dynamic> subjectsDynamic = [];
 
   String selectedIndexNumber = '';
   String selectedSubject = '';
@@ -59,7 +60,16 @@ class _HomePage extends State<HomePage> {
             camera: cameras!.first,
             indexNumber: selectedIndexNumber,
             subject: selectedSubject,
+            subjectId: _getSubjectId(),
             url: url)));
+  }
+
+  int _getSubjectId() {
+    for (var subject in subjectsDynamic) {
+      if (subject['name'] == selectedSubject) return subject['id'];
+    }
+
+    return 0;
   }
 
   void _fetchData() async {
@@ -73,6 +83,9 @@ class _HomePage extends State<HomePage> {
 
     // Fetch subject
     List<dynamic> subjectObjList = await widget.service.fetchSubjects(url);
+    setState(() {
+      subjectsDynamic = subjectObjList;
+    });
     List<String> subjectList = [];
     for (var subject in subjectObjList) {
       subjectList.add(subject['name']);

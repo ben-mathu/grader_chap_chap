@@ -11,6 +11,7 @@ class TakePictureScreen extends StatefulWidget {
       required this.title,
       required this.indexNumber,
       required this.subject,
+      required this.subjectId,
       required this.url});
 
   final String title;
@@ -18,6 +19,7 @@ class TakePictureScreen extends StatefulWidget {
 
   final String indexNumber;
   final String subject;
+  final int subjectId;
   final String url;
 
   final ApiService service = ApiService();
@@ -89,6 +91,21 @@ class _TakePictureScreen extends State<TakePictureScreen> {
     });
   }
 
+  void _saveMarks() {
+    setState(() {
+      showIndicator = true;
+    });
+    widget.service
+        .saveGrades(grade['total_marks'], widget.subjectId, widget.url)
+        .then((value) {
+      setState(() {
+        showIndicator = false;
+      });
+      Navigator.pop(context);
+    });
+    // debugPrint('_processImage: $grade');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -140,7 +157,12 @@ class _TakePictureScreen extends State<TakePictureScreen> {
                                   ],
                                 );
                               }).toList(),
-                            )
+                            ),
+                            ElevatedButton(
+                                onPressed: () {
+                                  _saveMarks();
+                                },
+                                child: const Text('Save Marks'))
                           ],
                         ),
                       ),
