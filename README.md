@@ -1,6 +1,7 @@
 # grader_chap_chap
 
-A new Flutter project to scan, grade and provide results of exams.
+A simple mobile application that teachers can use to upload their students' exam papers and grade them based on the answers provided.
+Grader Chap Chap integrates OpenAI's GPT to analyse question with answers and mark the answer's accuracy.
 
 ## Getting Started
 
