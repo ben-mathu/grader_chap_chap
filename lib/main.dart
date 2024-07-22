@@ -114,18 +114,18 @@ class _HomePage extends State<HomePage> {
             padding: const EdgeInsets.all(10),
             child: Card(
               child: Column(mainAxisSize: MainAxisSize.min, children: [
-                TextField(
-                  onChanged: (String value) => {
-                    setState(() {
-                      url = value;
-                    })
-                  },
-                  keyboardType: TextInputType.text,
-                  decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: 'Configure URL (temporary)',
-                      hintText: 'localhost:8000'),
-                ),
+                // TextField(
+                //   onChanged: (String value) => {
+                //     setState(() {
+                //       url = value;
+                //     })
+                //   },
+                //   keyboardType: TextInputType.text,
+                //   decoration: const InputDecoration(
+                //       border: OutlineInputBorder(),
+                //       labelText: 'Configure URL (temporary)',
+                //       hintText: 'localhost:8000'),
+                // ),
                 Padding(
                   padding: const EdgeInsets.all(10),
                   child: Autocomplete<String>(
@@ -137,7 +137,7 @@ class _HomePage extends State<HomePage> {
                       return TextField(
                         decoration: const InputDecoration(
                             label: Text('Index Number'),
-                            hintText: '001',
+                            hintText: 'eg. 001',
                             border: OutlineInputBorder()),
                         controller: fieldTextEditingController,
                         focusNode: fieldFocusNode,
@@ -173,7 +173,7 @@ class _HomePage extends State<HomePage> {
                       return TextField(
                         decoration: const InputDecoration(
                             label: Text('Subject'),
-                            hintText: 'Chemistry',
+                            hintText: 'eg. chemistry',
                             border: OutlineInputBorder()),
                         controller: fieldTextEditingController,
                         focusNode: fieldFocusNode,
@@ -186,7 +186,7 @@ class _HomePage extends State<HomePage> {
                       if (textEditingValue.text == '') {
                         return const Iterable<String>.empty();
                       }
-                      return subjects.where((String subject) => subject
+                      return subjects.where((String subject) => subject.toLowerCase()
                           .toString()
                           .contains(textEditingValue.text.toLowerCase()));
                     },
@@ -209,16 +209,16 @@ class _HomePage extends State<HomePage> {
                               RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(5)))),
                     ),
-                    const SizedBox(width: 5),
-                    ElevatedButton.icon(
-                      onPressed: _useImage,
-                      label: const Text('Upload Photo'),
-                      icon: const Icon(Icons.file_copy),
-                      style: ButtonStyle(
-                          shape: MaterialStateProperty.all(
-                              RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(5)))),
-                    ),
+                    // const SizedBox(width: 5),
+                    // ElevatedButton.icon(
+                    //   onPressed: _useImage,
+                    //   label: const Text('Upload Photo'),
+                    //   icon: const Icon(Icons.file_copy),
+                    //   style: ButtonStyle(
+                    //       shape: MaterialStateProperty.all(
+                    //           RoundedRectangleBorder(
+                    //               borderRadius: BorderRadius.circular(5)))),
+                    // ),
                   ],
                 )
               ]),

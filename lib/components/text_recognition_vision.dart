@@ -43,6 +43,7 @@ class _MyHomePageState extends State<MyHomePage> {
               camera: widget.camera,
               indexNumber: '',
               subject: '',
+              subjectId: 0,
               url: '',
             )));
   }
